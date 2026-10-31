@@ -57,7 +57,12 @@ services:
     ports:
       - "3000:3000"     # task-api published by the pipeline's deploy stage
     networks:
-      - jenkins
+      jenkins:
+        # The controller connects with DOCKER_HOST=tcp://docker:2376,
+        # so the dind container must be resolvable by the name "docker"
+        # on this network (same as --network-alias docker in the official docs).
+        aliases:
+          - docker
 
 networks:
   jenkins:
