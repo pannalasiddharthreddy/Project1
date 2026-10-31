@@ -1,0 +1,14 @@
+# Keep the build context small and the image cache-friendly.
+node_modules
+coverage
+reports
+.git
+.gitignore
+Jenkinsfile
+jenkins/
+docker-compose.prod.yml
+README.md
+.env
+.env.*
+*.log
+.DS_Store
