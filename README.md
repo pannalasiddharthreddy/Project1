@@ -70,8 +70,8 @@ docker-jenkins-task-api/
 ## Quickstart — run the app right now (no Jenkins needed)
 
 ```bash
-git clone https://github.com/<your-username>/docker-jenkins-task-api
-cd docker-jenkins-task-api
+git clone https://github.com/pannalasiddharthreddy/Project1
+cd Project1
 docker build -t task-api:local .
 docker run -d --name task-api -p 3000:3000 task-api:local
 curl -s http://localhost:3000/health
@@ -112,21 +112,23 @@ Validation rules: `title` required, non-empty string, ≤ 120 characters (trimme
 
 ## Step 1 — Push this repo to GitHub
 
-The project ships with a ready git history. From the repo root:
+> Already done during setup: this history was pushed to **[pannalasiddharthreddy/Project1](https://github.com/pannalasiddharthreddy/Project1)** (branch `main`). The steps below stay as a reference for pushing to a fresh repo.
+
+From the repo root:
 
 ```bash
 # 1. Create an EMPTY repo on github.com named: docker-jenkins-task-api
 #    (no README, no .gitignore, no license — avoid merge conflicts)
 
 # 2. Point the repo at your GitHub remote and push
-git remote add origin https://github.com/<your-username>/docker-jenkins-task-api.git
+git remote add origin https://github.com/pannalasiddharthreddy/Project1.git
 git push -u origin main
 ```
 
 If you prefer the GitHub CLI:
 
 ```bash
-gh repo create docker-jenkins-task-api --public --source=. --push
+gh repo create Project1 --public --source=. --push   # skip if the repo already exists
 ```
 
 > **Private repo?** Jenkins will need read access too: in Step 4 add a second credential of kind *SSH username with private key* or *Username with password* (a fine-grained PAT with *Contents: read-only*) and select it in the job's SCM config.
@@ -170,7 +172,7 @@ First boot pulls and builds for a few minutes (Jenkins image + plugins). Then:
 3. Scroll to **Pipeline**:
    - Definition: **Pipeline script from SCM**
    - SCM: **Git**
-   - Repository URL: `https://github.com/<your-username>/docker-jenkins-task-api.git`
+   - Repository URL: `https://github.com/pannalasiddharthreddy/Project1.git`
    - Script Path: `Jenkinsfile`
 4. **Save**, then hit **Build Now**
 
@@ -195,8 +197,8 @@ Your image is now public on Docker Hub as `<your-username>/task-api` with tags `
 
 ```bash
 # 0) install Docker + git, then:
-git clone https://github.com/<your-username>/docker-jenkins-task-api
-cd docker-jenkins-task-api
+git clone https://github.com/pannalasiddharthreddy/Project1
+cd Project1
 
 # 1) boot Jenkins + dind
 docker compose -f jenkins/docker-compose.yml up -d --build
@@ -220,7 +222,7 @@ curl -s http://localhost:3000/health
 Or with compose:
 
 ```bash
-curl -O https://raw.githubusercontent.com/<your-username>/docker-jenkins-task-api/main/docker-compose.prod.yml
+curl -O https://raw.githubusercontent.com/pannalasiddharthreddy/Project1/main/docker-compose.prod.yml
 IMAGE_NAME=<your-username>/task-api IMAGE_TAG=latest docker compose -p task-api -f docker-compose.prod.yml up -d
 ```
 
