@@ -1,0 +1,27 @@
+{
+  "name": "task-api",
+  "version": "1.0.0",
+  "description": "Demo task REST API used to practise a Docker + Jenkins CI/CD pipeline",
+  "main": "src/server.js",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "lint": "eslint .",
+    "test": "jest",
+    "test:ci": "jest --ci --runInBand --coverage"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "jest": "^30.0.0",
+    "jest-junit": "^16.0.0",
+    "supertest": "^7.0.0"
+  }
+}
