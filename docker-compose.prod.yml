@@ -1,0 +1,15 @@
+# Production-style deployment of task-api.
+#
+# Used by the Jenkins "Deploy & verify" stage, and reusable on ANY machine:
+#
+#   IMAGE_NAME=<dockerhub-username>/task-api IMAGE_TAG=<tag> \
+#     docker compose -p task-api -f docker-compose.prod.yml up -d
+#
+# Without those env vars it falls back to task-api:latest.
+services:
+  app:
+    image: ${IMAGE_NAME:-task-api}:${IMAGE_TAG:-latest}
+    container_name: task-api
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
