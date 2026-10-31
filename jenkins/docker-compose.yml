@@ -1,0 +1,68 @@
+# ---------------------------------------------------------------------------
+# Jenkins CI/CD stack: controller + privileged Docker-in-Docker (dind) daemon.
+#
+#   docker compose -f jenkins/docker-compose.yml up -d --build
+#
+# How it fits together (pattern from the official Jenkins "Installing Jenkins
+# with Docker" guide, adapted to compose):
+#
+#   * The controller talks to the dind daemon over TLS on tcp://docker:2376
+#     (DOCKER_HOST + /certs/client certificates).
+#   * Pipeline stages that declare `agent { docker { image 'node:20-alpine' } }`
+#     run inside throwaway containers created by that dind daemon.
+#   * The shared jenkins-data volume is ALSO mounted into dind at
+#     /var/jenkins_home. This is what allows the daemon to bind-mount the
+#     Jenkins workspace into agent containers - without it, `npm ci` would
+#     see an empty directory.
+#   * Anything the pipeline deploys on port 3000 is published through dind
+#     (ports: "3000:3000" below), so the app is reachable on the host at
+#     http://localhost:3000.
+# ---------------------------------------------------------------------------
+services:
+
+  jenkins:
+    build: .
+    image: local/jenkins-lts-docker:lts
+    container_name: jenkins
+    restart: unless-stopped
+    ports:
+      - "8080:8080"     # Jenkins web UI
+      - "50000:50000"   # inbound agent (JNLP) port
+    environment:
+      DOCKER_HOST: tcp://docker:2376
+      DOCKER_CERT_PATH: /certs/client
+      DOCKER_TLS_VERIFY: 1
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client:ro
+    networks:
+      - jenkins
+    depends_on:
+      - docker-dind
+
+  docker-dind:
+    image: docker:dind
+    container_name: jenkins-docker
+    restart: unless-stopped
+    # dockerd must run privileged to create containers, networks and volumes.
+    privileged: true
+    environment:
+      DOCKER_TLS_CERTDIR: /certs
+    volumes:
+      - jenkins-docker-certs:/certs/client
+      # Same volume as the controller, same mount point: lets the daemon
+      # resolve workspace paths when pipeline agent containers bind-mount them.
+      - jenkins-data:/var/jenkins_home
+      - jenkins-dind-storage:/var/lib/docker
+    ports:
+      - "3000:3000"     # task-api published by the pipeline's deploy stage
+    networks:
+      - jenkins
+
+networks:
+  jenkins:
+
+volumes:
+  jenkins-data:
+  jenkins-docker-certs:
+  jenkins-dind-storage:

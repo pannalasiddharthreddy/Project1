@@ -1,0 +1,9 @@
+# Plugins pre-installed into the controller image by jenkins/Dockerfile.
+# Dependencies are resolved automatically by jenkins-plugin-cli.
+workflow-aggregator
+git
+docker-workflow
+junit
+timestamper
+pipeline-stage-view
+htmlpublisher
